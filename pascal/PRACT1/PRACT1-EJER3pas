@@ -1,0 +1,112 @@
+program tres;
+type
+    empleado = record
+        nro:integer;
+        nombre:string;
+        apellido:string;
+        edad:integer;
+        dni:integer;
+    end;
+    archivoEmpleados = file of empleado;
+procedure leer(var e:empleado);
+begin
+    
+    
+    if(e.apellido <> 'fin') then begin
+        
+    end;
+end;
+procedure cargarArchivo(var aE:archivoEmpleados);
+var
+    e:empleado; nomArc: string;
+begin
+    writeln('----- NUEVO ARCHIVO -----');
+    write('Ingrese el nombre del archivo: '); readln(nomArc);
+    assign(aE,nomArc);
+    rewrite(aE);
+    writeln('Ingrese datos del empleado');
+    write('Apellido: '); readln(e.apellido);
+    while(e.apellido <> 'fin') do begin
+        write('Nro: '); readln(e.nro);
+        write('Nombre: '); readln(e.nombre);
+        write('Edad: '); readln(e.edad);
+        write('DNI: '); readln(e.dni);
+        write(aE,e);
+        writeln('Ingrese datos del empleado');
+        write('Apellido: '); readln(e.apellido);
+    end;
+    close(aE);
+end;
+procedure imprimirEmpleado(e:empleado);
+begin
+    writeln(e.nro,', ',e.nombre,', ',e.apellido,', ',e.edad,', ',e.dni,'.');
+end;
+procedure listarNomAp(var aE:archivoEmpleados);
+var
+    nomap:string; e:empleado;
+begin
+    writeln('Ingrese un nombre o apellido:');
+    readln(nomap);
+    reset(aE);
+    writeln('Empleados con ese nombre o apellido:');
+    while(not EOF(aE)) do begin
+        read(aE,e);
+        if(e.nombre = nomap) or (e.apellido = nomap) then
+            imprimirEmpleado(e);
+    end;
+    close(aE);
+end;
+procedure listarDeAUno(var aE:archivoEmpleados);
+var
+    e:empleado;
+begin
+    reset(aE);
+    writeln('Todos los empleados:');
+    while(not EOF(aE)) do begin
+        read(aE,e);
+        imprimirEmpleado(e);
+    end;
+    close(aE)
+end;
+procedure listarMayores70(var aE:archivoEmpleados);
+var
+    e:empleado;
+begin
+    reset(aE);
+    writeln('Empleados mayores de 70:');
+    while(not EOF(aE)) do begin
+        read(aE,e);
+        if(e.edad > 70) then
+            imprimirEmpleado(e);
+    end;
+    close(aE);
+end;
+
+function menu():integer;
+var
+    opt:integer;
+begin
+    writeln('----- ABRIR ARCHIVO -----');
+    writeln('1. Listar empleados con determinado nombre o apellido');
+    writeln('2. Listar todos los empleados');
+    writeln('3. Listar empleados mayores de 70');
+    readln(opt);
+    menu:= opt;
+end;
+procedure abrirArchivo(var aE:archivoEmpleados);
+begin
+    case menu() of
+        1: listarNomAp(aE);
+        2: listarDeAUno(aE);
+        3: listarMayores70(aE);
+    else
+        writeln('Opcion incorrecta.');
+    end;
+end;
+
+var
+    aE:archivoEmpleados;
+begin
+    cargarArchivo(aE);
+    abrirArchivo(aE);
+end.
